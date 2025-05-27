@@ -84,41 +84,178 @@ class Dataset{
        
 
     public ArrayList<Game> getGamesByPriceRange(int lowerPrice, int higherPrice){
-        //¿crear arreglo para guardar juegos en este rango de precios?
-        if (this.sortedByAtribute.equals("price")){
-            //otro algoritmo de busqueda binaria
-        }
-        else{
-            //busqueda lineal
-        }
-    } //No sé qué tipo de dato debe ir, lo dejo así por mientras
+    Arraylist<Game> resultado = newArraylist<>();
+         if (sortedByAtribute.equals("price")) {
+        // Búsqueda binaria para el límite inferior
+        int left = 0, right = data.size() - 1;
+        int start = -1;
 
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            int midPrice = data.get(mid).getPrice();
+
+            if (midPrice >= lowerPrice) {
+                start = mid;
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+
+        if (start != -1) {
+            for (int i = start; i < data.size(); i++) {
+                int price = data.get(i).getPrice();
+                if (price > higherPrice) break;
+                result.add(data.get(i));
+            }
+        }
+
+    } else {
+        for (Game g : data) {
+            int price = g.getPrice();
+            if (price >= lowerPrice && price <= higherPrice) {
+                result.add(g);
+            }
+        }
+    }
+
+    return result;
+}
+
+
+
+        
     public ArrayList<Game> getGamesByCategory(String category){
-        //¿crear arreglo para guardar juegos con esta categoria?
-        if (this.sortedByAtribute.equals("category")){
-            //busqueda binaria
+Arraylist<game> resultado = newArraylist<>();
+        if(thissortedByAtribute.equals("category")){
+            int left  = 0;
+                int right = data.size() - 1 ;
+            while(left <= right){
+                int mid = (left + right) / 2 ;
+                String midCategory = data.get(mid).getCategory(); 
+                int comparacion = midCategory.compareTo(category);
+                if( comparacion == 0 ) {
+                    int i = mid ;
+                    while( i >= data.get(i).getCategory().equals(category)){
+                        resultado.add(0 , data.get(i));
+                        i--;
+                }
+                    i = mid + 1;
+                    while( i < data.size() && data.get(i).getCategory().equals(category)){
+                    resultado.add(o , data.get(i))
+                    i++;    
+                    }
+                    break;
         }
-        else{
-            //busqueda lineal
+                else if (comparacion < 0) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
         }
+            else{
+            for(game g : data){
+                if(g.getCategory().equals("category")){
+                    resultado.add(g);
+                }
+            }
+
+                
+    }
+      return resultado;
     }
 
+
+
+
+
+        
     public ArrayList<Game> getGamesByQuality(int quality){
-        //¿crear arreglo para guardar juegos que tengan esta nota?
-        if (this.sortedByAtribute.equals("quality")){
-            //busqueda binaria
-        }
+       Arraylist<Game> resultado = nesArraylist<>();
+        if(this.sortedByAtribute.equals("quality")){
+            int left = 0 ;
+            int right = data.size() - 1 ;
+            while(left < right ){
+                int mid = (left + right ) /2 ;
+                    String midQuality = data.get(mid).getQuality();
+                        int comparacion = midQuality.comparteTo(quality);
+                        if(comparacion == 0 ){
+                            int i = mid ;
+                        }
+            }
+                            while(i >= 0 && data.get(i).getQuality().equals(quality)){
+                               resultado.add(0 , data.get(i));
+                                i--;
+                            }
+                            i = mid + 1 ;
+                            while(i < data.size() && data.get(i).getQuality().equals(quality) ){
+                                resultado.add(0 , data.get(i));
+                                i++;
+                                
+                            }
+                               break; 
+                        
+                        }
+                          else if (comparacion < 0) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }    
+
+
         else{
-            //busqueda lineal
+           for(Game g : data){
+               if(g.getQuality().equals("quality"){
+                   resultado.add(g);
         }
+               
+           }
+        }
+        return resultado;
     }
 
-    public void sortByAlgorithm(String algorithm, String attribute){
-        this.sortedByAtribute = attribute;
-        //se podría hacer de 2 formas, con "case : " o con if
-        //con "case : " sería más ordenado, porque se puede escribir cada algoritmo fuera de este metodo y de forma ordenada
+    
+  public void sortByAlgorithm(String algorithm, String attribute) {
+    Comparator<Game> comparator;
+
+    // Seleccionar el atributo por el cual se ordenará
+    switch (attribute) {
+        case "category":
+            comparator = Comparator.comparing(Game::getCategory);
+            break;
+        case "quality":
+            comparator = Comparator.comparingInt(Game::getQuality);
+            break;
+        case "price":
+        default:
+            comparator = Comparator.comparingInt(Game::getPrice);
+            attribute = "price"; // por defecto
+            break;
     }
 
+    // Ordenar usando el algoritmo especificado
+    switch (algorithm) {
+        case "bubbleSort":
+            bubbleSort(comparator);
+            break;
+        case "insertionSort":
+            insertionSort(comparator);
+            break;
+        case "selectionSort":
+            selectionSort(comparator);
+            break;
+        case "mergeSort":
+            data = mergeSort(data, comparator);
+            break;
+        case "quickSort":
+            quickSort(0, data.size() - 1, comparator);
+            break;
+        default:
+            Collections.sort(data, comparator);
+            break;
+    }
+
+    this.sortedByAtribute = attribute;
 }
 //------------------------Clase GenerateData-----------------------
 class GenerateData{
