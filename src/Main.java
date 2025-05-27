@@ -44,14 +44,44 @@ class Dataset{
 
 
     public ArrayList<Game> getGamesByPrice(int price){
-        //¿crear arreglo para guardar juegos con este valor?
+       Arraylist<Game> resultado = newArraylist<>();   //creamos arreglo
         if (this.sortedByAtribute.equals("price")){
-            //algoritmo búsqueda binaria
-        }
-        else{
-            //busqueda lineal
-        }
+        int left = 0 ;  // auxiliar de inicio
+        int right = Data.size() - 1 ;  //auxiliar 2 de inicio
+            while (left <= right){      // condicion para crear la mitad 
+                int mid = (left + right ) / 2 ; 
+                int midPrice = data.get(mid).getPrice();  // valor del medio 
+                    if ( midPrice == price ) {
+                        int i = mid;
+                            while ( i >= 0 && data.get(i).getPrice() == price ){ //ver si hayy mas juegos para la izquierda con los mismos valores 
+                        result.add(0 , data.get(i));
+                        i --;
+                    }
+                     int i = mid + 1 ; 
+                        while( i < data.size() && data.get(i).getPrice() == price ){ //ver si hayy mas juegos para la derecha con los mismos valores 
+                            result.add( data.get(i));
+                            i ++;
+                        }  
+                        break; 
+                    }
+                else if ( midPirce < price ){
+                    left = mid + 1 ;
+                    
+                }
+                else {
+                    right = mid - 1;
+                }
+            } 
+        } 
+        else // lineal 
+            for(game g : data){
+                if(g.getPrice == price){
+                    result.add(g);
+                }
+            }  
+        return result;            
     }
+       
 
     public ArrayList<Game> getGamesByPriceRange(int lowerPrice, int higherPrice){
         //¿crear arreglo para guardar juegos en este rango de precios?
