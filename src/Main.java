@@ -400,7 +400,17 @@ private int partition(int low, int high, Comparator<Game> comparator) {
 //------------------------Clase GenerateData-----------------------
 
 class GenerateData{
+private static final Random random = new Random();// primero para generar palabras 
+    private static String randomId(int length)
+//ns como seguirlo 
 
+     public static ArrayList<Game> generateGames(int amount) { //para general los juegos 
+        ArrayList<Game> games = new ArrayList<>(amount);
+         for (int i = 0; i < amount; i++) {
+            String name = "Game" + randomId(5);        // generar juego con letras randoms como nombre
+            String category = "Accion" + randomId(4);     //  categoria con letras randoms como nombre
+            int price = 1 + random.nextInt(1000);      // precio desde hasta 1000
+            int quality = 1 + random.nextInt(10); // calidad desde 1 a 10 
 }
 
 //-----------------------Main------------------------
@@ -408,7 +418,13 @@ class GenerateData{
 public class Main {
 
     public static void main(String[] args) {
+int[] testSizes = {10, 100, 1_000, 10_000, 100_000, 1_000_000}; // crear arreglo con las cantidades que queremos de juegos 
 
+        for (int size : testSizes) {
+            System.out.println("Generando " + size + " juegos...");  // luego recorremos el arreglo 
+            long start = System.currentTimeMillis();
 
+            ArrayList<Game> games = GenerateData.generateGames(size);
+//ns como seguirlo //
     }
 }
