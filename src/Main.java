@@ -233,11 +233,169 @@ class Dataset{
         }
     }
 
-    public void bubbleSort(String attribute){ }
-    public void insertionSort(String attribute){ }
-    public void selectionSort(String attribute){ }
-    public void mergeSort(String attribute){ }
-    public void quickSort(String attribute){ }
+    public void bubbleSort(String attribute){
+         Comparator<Game> comparator;  // comparar y sus condiciones 
+
+    switch (attribute) {
+        case "category":
+            comparator = Comparator.comparing(Game::getCategory);
+            break;
+        case "quality":
+            comparator = Comparator.comparingInt(Game::getQuality);
+            break;
+        default:
+            comparator = Comparator.comparingInt(Game::getPrice);
+            break;
+    }
+// metodo burbuja 
+    for (int i = 0; i < data.size() - 1; i++) {
+        for (int j = 0; j < data.size() - i - 1; j++) {
+            if (comparator.compare(data.get(j), data.get(j + 1)) > 0) {
+                Collections.swap(data, j, j + 1);
+            }
+        }
+    }
+    }
+    public void insertionSort(String attribute){ 
+        Comparator<Game> comparator;// comparar y sus condiciones
+ 
+
+    switch (attribute) {
+        case "category":
+            comparator = Comparator.comparing(Game::getCategory);
+            break;
+        case "quality":
+            comparator = Comparator.comparingInt(Game::getQuality);
+            break;
+        default:
+            comparator = Comparator.comparingInt(Game::getPrice);
+            break;
+    }
+// metodo insertion
+    for (int i = 1; i < data.size(); i++) {
+        Game key = data.get(i);
+        int j = i - 1;
+
+        while (j >= 0 && comparator.compare(data.get(j), key) > 0) {
+            data.set(j + 1, data.get(j));
+            j--;
+        }
+        data.set(j + 1, key);
+    }
+}
+    public void selectionSort(String attribute){
+         Comparator<Game> comparator;// comparar y sus condiciones
+
+    switch (attribute) {
+        case "category":
+            comparator = Comparator.comparing(Game::getCategory);
+            break;
+        case "quality":
+            comparator = Comparator.comparingInt(Game::getQuality);
+            break;
+        default:
+            comparator = Comparator.comparingInt(Game::getPrice);
+            break;
+    }
+// metodo selection
+    for (int i = 0; i < data.size() - 1; i++) {
+        int minIndex = i;
+
+        for (int j = i + 1; j < data.size(); j++) {
+            if (comparator.compare(data.get(j), data.get(minIndex)) < 0) {
+                minIndex = j;
+            }
+        }
+
+        Collections.swap(data, i, minIndex);
+    }
+    }
+    public void mergeSort(String attribute){ 
+        // comparar 
+        Comparator<Game> comparator;
+
+    switch (attribute) {
+        case "category":
+            comparator = Comparator.comparing(Game::getCategory);
+            break;
+        case "quality":
+            comparator = Comparator.comparingInt(Game::getQuality);
+            break;
+        default:
+            comparator = Comparator.comparingInt(Game::getPrice);
+            break;
+    }
+//metodo de ordenamiento merge sort
+    data = mergeSortHelper(data, comparator);
+}
+
+private ArrayList<Game> mergeSortHelper(ArrayList<Game> list, Comparator<Game> comparator) {
+    if (list.size() <= 1) return list;
+
+    int mid = list.size() / 2;
+    ArrayList<Game> left = new ArrayList<>(list.subList(0, mid));
+    ArrayList<Game> right = new ArrayList<>(list.subList(mid, list.size()));
+
+    return merge(mergeSortHelper(left, comparator), mergeSortHelper(right, comparator), comparator);
+}
+
+private ArrayList<Game> merge(ArrayList<Game> left, ArrayList<Game> right, Comparator<Game> comparator) {
+    ArrayList<Game> result = new ArrayList<>();
+    int i = 0, j = 0;
+
+    while (i < left.size() && j < right.size()) {
+        if (comparator.compare(left.get(i), right.get(j)) <= 0) {
+            result.add(left.get(i++));
+        } else {
+            result.add(right.get(j++));
+        }
+    }
+
+    while (i < left.size()) result.add(left.get(i++));
+    while (j < right.size()) result.add(right.get(j++));
+
+    return result;}
+    public void quickSort(String attribute){
+        //comparar 
+        Comparator<Game> comparator;
+
+    switch (attribute) {
+        case "category":
+            comparator = Comparator.comparing(Game::getCategory);
+            break;
+        case "quality":
+            comparator = Comparator.comparingInt(Game::getQuality);
+            break;
+        default:
+            comparator = Comparator.comparingInt(Game::getPrice);
+            break;
+    }
+// metodo quicksort 
+    quickSortHelper(0, data.size() - 1, comparator);
+}
+
+private void quickSortHelper(int low, int high, Comparator<Game> comparator) {
+    if (low < high) {
+        int pi = partition(low, high, comparator);
+        quickSortHelper(low, pi - 1, comparator);
+        quickSortHelper(pi + 1, high, comparator);
+    }
+}
+
+private int partition(int low, int high, Comparator<Game> comparator) {
+    Game pivot = data.get(high);
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (comparator.compare(data.get(j), pivot) <= 0) {
+            i++;
+            Collections.swap(data, i, j);
+        }
+    }
+
+    Collections.swap(data, i + 1, high);
+    return i + 1;
+    }
 }
 //------------------------Clase GenerateData-----------------------
 
