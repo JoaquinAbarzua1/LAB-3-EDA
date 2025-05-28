@@ -1,8 +1,8 @@
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.Random; //para la generacion de nombres aleatorios
+import java.util.Random;
 
 //-----------------------Clase Game-----------------------
 class Game{
@@ -198,13 +198,49 @@ class Dataset{
     }
 
     public void sortByAlgorithm(String algorithm, String attribute){
-        this.sortedByAttribute = attribute;
-        //se podría hacer de 2 formas, con "case : " o con if
-        //con "case : " sería más ordenado, porque se puede escribir cada algoritmo fuera de este metodo y de forma ordenada
+        if (!(attribute.equals("price")||attribute.equals("category")||attribute.equals("quality"))){
+            attribute = "price";} //Si el atributo no es ninguno de estos 3, "price" será el atributo por defecto
+
+        this.sortedByAttribute = attribute; //se actualiza el atributo por el cual está ordenada la lista
+        switch (algorithm){
+            case "bubbleSort" :
+                bubbleSort(attribute);
+                break;
+            case "insertionSort" :
+                insertionSort(attribute);
+                break;
+            case "selectionSort" :
+                selectionSort(attribute);
+                break;
+            case "mergeSort" :
+                mergeSort(attribute);
+                break;
+            case "quickSort" :
+                quickSort(attribute);
+                break;
+            default :
+                switch (attribute){ //No sé cómo explicarlo, pero Comparator.comparing genera un comparador, con el cual se ordenará el arreglo
+                    case "category" :
+                        Collections.sort(data, Comparator.comparing(Game::getCategory));
+                        break;
+                    case "quality" :
+                        Collections.sort(data, Comparator.comparingInt(Game::getQuality));
+                        break;
+                    default :
+                        Collections.sort(data, Comparator.comparingInt(Game::getPrice));
+                        break;
+                }
+        }
     }
 
+    public void bubbleSort(String attribute){ }
+    public void insertionSort(String attribute){ }
+    public void selectionSort(String attribute){ }
+    public void mergeSort(String attribute){ }
+    public void quickSort(String attribute){ }
 }
 //------------------------Clase GenerateData-----------------------
+
 class GenerateData{
 
 }
