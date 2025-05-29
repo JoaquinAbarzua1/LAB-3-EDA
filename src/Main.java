@@ -24,13 +24,6 @@ class Game{
     public int getPrice(){ return this.price; }
     public int getQuality(){ return this.quality; }
 
-    //Creo que no son necesarios los sets, pero los dejaré por si acaso, después se borran en caso de no usarse
-
-    public void setName(String name){ this.name = name; }
-    public void setCategory(String category){ this.category = category; }
-    public void setPrice(int price){ this.price = price; }
-    public void setQuality(int quality){ this.quality = quality; }
-
 }
 //-----------------------Clase Dataset-----------------------
 
