@@ -1,4 +1,5 @@
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -367,22 +368,77 @@ class GenerateData {
         }
         return games;
     }
+}
 
 //-----------------------Main------------------------
+public class Main {
+    public static void main(String[] args) {
+        int[] tamaños = { 100, 10_000, 1_000_000 };
 
-        public class Main {
+        for (int tamaño : tamaños) {
+            String archivo = "games_" + tamaño + ".csv";
+            File f = new File(archivo);
 
-            public static void main(String[] args) {
-                int[] testSizes = {10, 100, 1_000, 10_000, 100_000, 1_000_000}; // crear arreglo con las cantidades que queremos de juegos
-
-                for (int size : testSizes) {
-                    System.out.println("Generando " + size + " juegos...");  // luego recorremos el arreglo
-                    long start = System.currentTimeMillis();
-
-                    ArrayList<Game> games = GenerateData.generateGames(size);
-//ns como seguirlo //
+            ArrayList<Game> lista;
+            if (f.exists()) {
+                System.out.println("→ El archivo " + archivo + " ya existe. Cargando datos...");
+                try {
+                    lista = cargarDesdeCsv(archivo);
+                } catch (IOException e) {
+                    System.err.println("Error al leer " + archivo + ": " + e.getMessage());
+                    continue;
+                }
+            } else {
+                System.out.println("→ Generando dataset de tamaño " + tamaño + "...");
+                lista = GenerateData.generateGames(tamaño);
+                try {
+                    guardarEnCsv(lista, archivo);
+                    System.out.println("   Guardado en: " + archivo);
+                } catch (IOException e) {
+                    System.err.println("   ¡Error al escribir " + archivo + ": " + e.getMessage());
+                    continue;
                 }
             }
+
+            // Aquí ya tienes 'lista' cargada (o generada) para tus pruebas de rendimiento.
+            // Por ejemplo:
+            System.out.println("   Número de juegos en memoria: " + lista.size());
         }
+    }
+
+    // --------------------------------------------------
+    // Guarda la lista de juegos en un CSV con cabecera
+    // --------------------------------------------------
+    private static void guardarEnCsv(ArrayList<Game> juegos, String ruta) throws IOException {
+        try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(ruta)))) {
+            pw.println("Name,Category,Price,Quality");
+            for (Game g : juegos) {
+                pw.printf("%s,%s,%d,%d%n",
+                        g.getName(),
+                        g.getCategory(),
+                        g.getPrice(),
+                        g.getQuality()
+                );
+            }
+        }
+    }
+
+    // --------------------------------------------------
+    // Carga la lista de juegos desde un CSV
+    // --------------------------------------------------
+    private static ArrayList<Game> cargarDesdeCsv(String ruta) throws IOException {
+        ArrayList<Game> juegos = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(ruta))) {
+            String linea = br.readLine();            // salto de cabecera
+            while ((linea = br.readLine()) != null) {
+                String[] partes = linea.split(",", -1);
+                String name     = partes[0];
+                String category = partes[1];
+                int price       = Integer.parseInt(partes[2]);
+                int quality     = Integer.parseInt(partes[3]);
+                juegos.add(new Game(name, category, price, quality));
+            }
+        }
+        return juegos;
     }
 }
