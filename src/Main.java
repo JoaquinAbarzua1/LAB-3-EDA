@@ -51,14 +51,14 @@ class Dataset{
             while (lo <= hi){      // condicion para crear la mitad
                 int mid = (lo + hi ) / 2 ;
 
-                if ( data.get(mid).getPrice() == price ) { //Si el juego que está en la posición mid tiene el precio buscado
+                if ( data.get(mid).getPrice() == price) { //Si el juego que está en la posición mid tiene el precio buscado
                     int aux = mid;
-                    while (data.get(aux).getPrice() == price){ //ve si hay más juegos para la izquierda con los mismos valores
+                    while (data.get(aux).getPrice() == price && aux >= 0){ //ve si hay más juegos para la izquierda con los mismos valores
                         resultado.add(data.get(aux)); //Saqué lo de addFirst o add(0,dato) porque es de complejidad lineal
                         aux --;
                     }
                     aux = mid + 1 ;
-                    while(data.get(aux).getPrice() == price){ //ve si hay mas juegos para la derecha con los mismos valores
+                    while(data.get(aux).getPrice() == price && aux < data.size()){ //ve si hay mas juegos para la derecha con los mismos valores
                         resultado.add( data.get(aux));
                         aux ++;
                     }
@@ -237,6 +237,7 @@ class Dataset{
         }
     }
 
+    //----------------------- Ordenamiento de data -------------------------
     public void bubbleSort(Comparator<Game> comparator){
         boolean swapped; //bandera para saber si hubo algun swap
         for (int i = 0; i < data.size(); i++){
@@ -251,6 +252,8 @@ class Dataset{
         }
     }
 
+    //----------------------- insertionSort ------------------------
+
     public void insertionSort(Comparator<Game> comparator){
         for (int i = 1; i < data.size(); i++){
             for (int j = i; j > 0; j--){
@@ -262,6 +265,7 @@ class Dataset{
         }
     }
 
+    //------------------------- selectionSort--------------------------
     public void selectionSort(Comparator<Game> comparator){
         for (int i = 0; i < data.size(); i++){
             int min = i;
@@ -273,25 +277,97 @@ class Dataset{
             if (min != i){ Collections.swap(data, i, min); } //si al final del ciclo j encontré un mínimo, hago el cambio
         }
     }
-    public void mergeSort(Comparator<Game> comparator){
 
+    //------------------------------ mergeSort ----------------------------
+    public void mergeSort(Comparator<Game> comparator){ //método que llama a metodo recursivo interno
+        data = sort(data, comparator);
     }
-    public void quickSort(Comparator<Game> comparator){ }
+    private ArrayList<Game> sort (ArrayList<Game> lista, Comparator<Game> comparator){
+        if (lista.size() <= 1) { return lista; } //cuando la lista no se pueda dividir más
+
+        int mid = lista.size() / 2;
+        ArrayList<Game> izq = new ArrayList<>(lista.subList(0, mid)); //separa la lista en 2 partes
+        ArrayList<Game> der = new ArrayList<>(lista.subList(mid, lista.size()));
+
+        izq = sort(izq, comparator); //se llama a si misma para volver a separar cada lista resultante hasta que no se pueda separar más
+        der = sort(der, comparator);
+
+        return merge(izq, der, comparator);//llama a método que unirá las listas en orden
+    }
+    private ArrayList<Game> merge(ArrayList<Game> izq, ArrayList<Game> der, Comparator<Game> comparator) {
+        ArrayList<Game> resultado = new ArrayList<>();
+        int i = 0, j = 0;
+        while (i < izq.size() && j < der.size()) {//mientras no llegue al final de alguna lista
+            if (comparator.compare(izq.get(i), der.get(j)) <= 0) { //si el atributo del juego que está en mi lista izquierda es "menor" o igual que atrbuto del juego de la lista derecha
+                resultado.add(izq.get(i++));
+            }
+            else { resultado.add(der.get(j++)); } //si el atributo del juego que está en la lista izquierda es "mayor" que el atributo del juego que está a en la lista derecha
+        }
+        while (i < izq.size()) { resultado.add(izq.get(i++)); } //cuando haya llegado al final de la lista derecha y aún me quedan elementos de la lista izquierda
+        while (j < der.size()) { resultado.add(der.get(j++)); } //cuando haya llegado al final de la lista izquierda y aún me quedan elementos de la lista derecha
+        return resultado;
+    }
 
 
+    //--------------------------- quickSort ----------------------------
+    public void quickSort(Comparator<Game> comparator){
+        sort(0, data.size() - 1, comparator);
+    }
+    private void sort(int lo, int hi, Comparator<Game> comparator){ //metodo recursivo
+        if (lo < hi){
+            int pivoteIndex = partition(lo, hi, comparator); //posición retornada donde se encuentra el pivote, o sea, donde los juegos tienen valores menores (izquierda del pivote) y donde tienen mayores valores (derecha del pivote)
+            sort(lo, pivoteIndex - 1, comparator); //mueve todos los juegos cuyos atributos sean "menores" o iguales al atributo del juego al que apunta el pivote
+            sort(pivoteIndex + 1, hi, comparator); //mueve todos los juegos cuyos atributos sean "mayores" al atributo del juego al que apunta el pivote
+        }
+    }
+    private int partition (int lo, int hi, Comparator<Game> comparator){
+        Game pivote = data.get(hi); //se elige un pivote (al comienzo es el ultimo juego de la lista, luego uno de valor mayor)
+        int i = lo-1; //será el indice de los juegos cuyo atributo tenga un valor "menor" o igual al juego apuntado por el pivote
+        for (int j = lo; j < hi; j++){ //recorre los juegos desde el más bajo hasta el final
+            if (comparator.compare(data.get(j), pivote) <= 0){ //si el atributo del juego que está en la posicion j (baja) de la lista es "menor" o igual que el último de la lista
+                i++;
+                Collections.swap(data, i, j); //mueve el juego en j a la posicion anterior (a la izquierda)
+            } //cuando haya un juego mayor al juego del pivote, i no se actualiza, pero sí j, entonces cuando se encuentre un juego menor al del pivote, se cambiará i (juego mayor a pivote) con j (juego menor a pivote), dejando los juegos menores a la izquierda
+        }
+        Collections.swap(data, i + 1, hi); //detrás de i están todos los juegos menores al juego del pivote
+        // entonces se cambia el juego que está después de i (mayor que el pivote) con el pivote, dejando así al pivote donde corresponde (antes que i, el cual representa los juegos mayores que el pivote)
+        return i + 1; //retorna a pivoteIndex la posición de los juegos cuyo atributo es menor que el atributo del juego en el pivote
+    }
 }
+
 //------------------------Clase GenerateData-----------------------
 
-class GenerateData{
+class GenerateData {
 
-}
+    private static final Random random = new Random();// primero para generar palabras
+
+    private static String randomId(int length)
+//ns como seguirlo
+
+    public static ArrayList<Game> generateGames(int amount) { //para general los juegos
+        ArrayList<Game> games = new ArrayList<>(amount);
+        for (int i = 0; i < amount; i++) {
+            String name = "Game" + randomId(5);        // generar juego con letras randoms como nombre
+            String category = "Accion" + randomId(4);     //  categoria con letras randoms como nombre
+            int price = 1 + random.nextInt(1000);      // precio desde hasta 1000
+            int quality = 1 + random.nextInt(10); // calidad desde 1 a 10
+        }
 
 //-----------------------Main------------------------
 
-public class Main {
+        public class Main {
 
-    public static void main(String[] args) {
+            public static void main(String[] args) {
+                int[] testSizes = {10, 100, 1_000, 10_000, 100_000, 1_000_000}; // crear arreglo con las cantidades que queremos de juegos
 
+                for (int size : testSizes) {
+                    System.out.println("Generando " + size + " juegos...");  // luego recorremos el arreglo
+                    long start = System.currentTimeMillis();
 
+                    ArrayList<Game> games = GenerateData.generateGames(size);
+//ns como seguirlo //
+                }
+            }
+        }
     }
 }
