@@ -373,72 +373,76 @@ class GenerateData {
 //-----------------------Main------------------------
 public class Main {
     public static void main(String[] args) {
-        int[] tamaños = { 100, 10_000, 1_000_000 };
+        int[] tamaños = { 100, 10_000, 1_000_000 };                // Arreglo con los tamaños de dataset que se quieren usar
 
-        for (int tamaño : tamaños) {
-            String archivo = "games_" + tamaño + ".csv";
-            File f = new File(archivo);
+        for (int tamaño : tamaños) {                               // Itera sobre cada tamaño del arreglo
+            String archivo = "games_" + tamaño + ".csv";           // Construye el nombre del archivo CSV correspondiente
+            File f = new File(archivo);                            // Crea un objeto File para verificar si el archivo ya existe
 
-            ArrayList<Game> lista;
-            if (f.exists()) {
+            ArrayList<Game> lista;                 
+
+            if (f.exists()) {                                      // Si el archivo ya existe
                 System.out.println("→ El archivo " + archivo + " ya existe. Cargando datos...");
                 try {
-                    lista = cargarDesdeCsv(archivo);
+                    lista = cargarDesdeCsv(archivo);               // Carga los datos desde el archivo CSV
                 } catch (IOException e) {
+                                                                    // Si ocurre un error al leer el archivo, se muestra un mensaje y se salta al siguiente tamaño
                     System.err.println("Error al leer " + archivo + ": " + e.getMessage());
                     continue;
                 }
             } else {
+                                                                        // Si el archivo no existe, se genera el dataset
                 System.out.println("→ Generando dataset de tamaño " + tamaño + "...");
-                lista = GenerateData.generateGames(tamaño);
+                lista = GenerateData.generateGames(tamaño);                 // Genera una lista de juegos aleatorios
                 try {
-                    guardarEnCsv(lista, archivo);
-                    System.out.println("   Guardado en: " + archivo);
+                    guardarEnCsv(lista, archivo);                           // Guarda la lista generada en un archivo CSV
+                    System.out.println("   Guardado en: " + archivo); 
                 } catch (IOException e) {
+                                                                           // Si ocurre un error al guardar se muestra un mensaje y se salta al siguiente tamaño
                     System.err.println("   ¡Error al escribir " + archivo + ": " + e.getMessage());
                     continue;
                 }
             }
 
-            // Aquí ya tienes 'lista' cargada (o generada) para tus pruebas de rendimiento.
-            // Por ejemplo:
-            System.out.println("   Número de juegos en memoria: " + lista.size());
+         
+            System.out.println("   Número de juegos en memoria: " + lista.size()); // Muestra  cantidad de juegos cargados
         }
     }
 
-    // --------------------------------------------------
-    // Guarda la lista de juegos en un CSV con cabecera
-    // --------------------------------------------------
+    
+    // Guarda la lista de juegos en un archivo CSV con cabecera
+   
     private static void guardarEnCsv(ArrayList<Game> juegos, String ruta) throws IOException {
         try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(ruta)))) {
-            pw.println("Name,Category,Price,Quality");
+            pw.println("Name,Category,Price,Quality"); // Escribe la cabecera del archivo CSV
             for (Game g : juegos) {
+                                                                                     // Escribe cada juego en una línea del CSV
                 pw.printf("%s,%s,%d,%d%n",
-                        g.getName(),
-                        g.getCategory(),
-                        g.getPrice(),
-                        g.getQuality()
+                        g.getName(),                                                 // Nombre del juego
+                        g.getCategory(),                                             // Categoría del juego
+                        g.getPrice(),                                                // Precio del juego
+                        g.getQuality()                                               // Calidad del juego
                 );
             }
         }
     }
 
-    // --------------------------------------------------
-    // Carga la lista de juegos desde un CSV
-    // --------------------------------------------------
+
+    // Carga la lista de juegos desde un archivo CSV
+    
     private static ArrayList<Game> cargarDesdeCsv(String ruta) throws IOException {
-        ArrayList<Game> juegos = new ArrayList<>();
+        ArrayList<Game> juegos = new ArrayList<>();                                    // Crea una lista vacía para almacenar los juegos
         try (BufferedReader br = new BufferedReader(new FileReader(ruta))) {
-            String linea = br.readLine();            // salto de cabecera
-            while ((linea = br.readLine()) != null) {
+            String linea = br.readLine();                                              // Lee la primera línea (cabecera) y la descarta
+            while ((linea = br.readLine()) != null) {                                 // Lee línea por línea el resto del archivo
                 String[] partes = linea.split(",", -1);
-                String name     = partes[0];
-                String category = partes[1];
+                String name     = partes[0];                                            // Extrae el nombre
+                String category = partes[1];                                            // Extrae la categoría
                 int price       = Integer.parseInt(partes[2]);
-                int quality     = Integer.parseInt(partes[3]);
-                juegos.add(new Game(name, category, price, quality));
+                int quality     = Integer.parseInt(partes[3]); 
+                juegos.add(new Game(name, category, price, quality));                  // Crea un objeto Game y lo agrega a la lista
             }
         }
-        return juegos;
+        return juegos;                                                                 // Devuelve la lista de juegos cargados
     }
 }
