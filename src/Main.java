@@ -279,7 +279,7 @@ class Dataset{
     }
 
     //------------------------------ mergeSort ----------------------------
-    public void mergeSort(Comparator<Game> comparator){ //método que llama a metodo recursivo interno
+    public void mergeSort(Comparator<Game> comparator){ //metodo que llama a metodo recursivo interno
         data = sort(data, comparator);
     }
     private ArrayList<Game> sort (ArrayList<Game> lista, Comparator<Game> comparator){
@@ -292,7 +292,7 @@ class Dataset{
         izq = sort(izq, comparator); //se llama a si misma para volver a separar cada lista resultante hasta que no se pueda separar más
         der = sort(der, comparator);
 
-        return merge(izq, der, comparator);//llama a método que unirá las listas en orden
+        return merge(izq, der, comparator);//llama a metodo que unirá las listas en orden
     }
     private ArrayList<Game> merge(ArrayList<Game> izq, ArrayList<Game> der, Comparator<Game> comparator) {
         ArrayList<Game> resultado = new ArrayList<>();
@@ -341,17 +341,32 @@ class GenerateData {
 
     private static final Random random = new Random();// primero para generar palabras
 
-    private static String randomId(int length)
-//ns como seguirlo
+    private static final String[] palabras = {"Dragon", "Empire", "Quest", "Galaxy", "Legends", "Warrior", "ARK", "Arma",
+            "Brutal", "Legend", "Duty", "Company", "Counter", "Strike", "Dark", "Dead", "Honor", "Theft", "Grand",
+            "Killing", "Floor", "Left", "Strange", "Life", "Mafia", "Metro", "Combat", "Heist", "Battle", "Saints", "Row", "Space",
+            "War", "Thunder", "Royale", "Medal", "Honor", "Speed", "Plague", "Tale", "Beyond", "Control", "Age", "Dying",
+            "Light", "Escape", "Knights", "Garden", "Plants", "Runner", "Hell", "Mortal", "Warrior", "Combat", "Sniper",
+            "Meat", "Rot", "Evil"};
 
-    public static ArrayList<Game> generateGames(int amount) { //para general los juegos
-        ArrayList<Game> games = new ArrayList<>(amount);
-        for (int i = 0; i < amount; i++) {
-            String name = "Game" + randomId(5);        // generar juego con letras randoms como nombre
-            String category = "Accion" + randomId(4);     //  categoria con letras randoms como nombre
-            int price = 1 + random.nextInt(1000);      // precio desde hasta 1000
-            int quality = 1 + random.nextInt(10); // calidad desde 1 a 10
+    private static final String[] categorias = {"Acción", "Aventura", "Estrategia", "RPG", "Deportes", "Simulación",
+            "Cartas", "Casual", "Comedia", "Disparos", "Exploración", "Indie", "Mundo Abierto", "Narración",
+            "Plataformas", "Rompecabezas", "Supervivencia", "Terror", "Casual", "Multijugador", "Cooperativo",};
+
+
+    public static ArrayList<Game> generateGames(int tamaño) { //para general los juegos
+        ArrayList<Game> games = new ArrayList<>(tamaño);
+
+        for (int i = 0; i < tamaño; i++) {
+            String name = palabras[random.nextInt(palabras.length)] + palabras[random.nextInt(palabras.length)]; // generar juego con palabras randoms como nombre
+            String category = categorias[random.nextInt(categorias.length)];
+            //  categoria al azar
+            int price = 1000 + random.nextInt(70000 - 1000 + 1);      // precio desde 1000 hasta 70000
+            int quality = random.nextInt(101); // calidad desde 0 y 100
+
+            games.add(new Game(name, category, price, quality));
         }
+        return games;
+    }
 
 //-----------------------Main------------------------
 
